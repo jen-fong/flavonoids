@@ -3,9 +3,9 @@ import re
 from filesys import Output
 
 
-def convert(month=None, wavelength=None, date=None):
+def convert(month, wavelength, date=None):
     csv_adapter = Output()
-    csvs = csv_adapter.get_path('2014-04', '570', '160423').find_all_csv()
+    csvs = csv_adapter.get_path(month, wavelength, date).find_all_csv()
 
     for csv in csvs:
         df1 = pd.read_csv(str(csv))
@@ -53,4 +53,10 @@ def convert(month=None, wavelength=None, date=None):
         df1[updated_headers[2::2]] = df1[updated_headers[2::2]].apply(lambda x: x - buffer_exp)
 
         df1 = df1.set_index('wavelength')
-        Output().get_path('2014-04', '570', '160423', 'analysis').output_csv(df1, csv.name)
+
+        date = csv.parts[len(csv.parents) - 2]
+
+        print('Doing calculations for {} {}'.format(date, csv.name))
+        Output() \
+        .get_path(month, wavelength, date, 'analysis') \
+        .output_csv(df1, csv.name)

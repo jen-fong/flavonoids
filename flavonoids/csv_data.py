@@ -31,7 +31,7 @@ def convert(month, wavelength, date=None):
         df1 = df1[:wavelength_end]
         df1 = df1[:-1]
         df1 = df1.dropna(axis=1, how='all')
-
+        df1 = df1.apply(pd.to_numeric, errors='ignore')
         # Finally, update all the headers so they do not just say intensity
         updated_headers = ['wavelength',
                            'buffer control',
@@ -45,7 +45,6 @@ def convert(month, wavelength, date=None):
                            'H2O2 control',
                            'H2O2 experiment']
         df1.columns = updated_headers
-
         df1 = df1.apply(pd.to_numeric, errors='ignore')
         buffer_control = df1['buffer control']
         buffer_exp = df1['buffer experiment']
@@ -58,5 +57,5 @@ def convert(month, wavelength, date=None):
 
         print('Doing calculations for {} {}'.format(date, csv.name))
         Output() \
-        .get_path(month, wavelength, date, 'analysis') \
+        .get_path(month, wavelength, date, 'processed') \
         .output_csv(df1, csv.name)

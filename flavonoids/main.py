@@ -24,6 +24,9 @@ def init_parser():
     parser.add_argument('--graph',
                         action='store_true',
                         help='Create graphs of data')
+    parser.add_argument('--diff',
+                        action='store_true',
+                        help='Processes the percent diff for each compound')
 
     return parser
 
@@ -44,8 +47,8 @@ def init_convert(parser):
     if args.graph:
         graph.create(month, nm, date)
 
+    if args.diff:
+        graph.get_value(month, nm)
 
 if __name__ == "__main__":
-    # csv_data.convert()
-    # graph.create()
     init_convert(init_parser())

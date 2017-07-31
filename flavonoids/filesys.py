@@ -27,13 +27,13 @@ class Output(Csvs):
         self.path.mkdir(exist_ok=True, parents=True)
         return self.path.joinpath(name)
 
-    def output_csv(self,df, name):
+    def output_csv(self, df, name):
         filename = self.set_path(name)
         df.to_csv(filename, sep=',')
-        return filename
+        return self
 
     def output_html(self, fig, name):
         # stringify the path for regular usage
         filename = str(self.set_path(name))
         plotly.offline.plot(fig,filename=filename, auto_open=False)
-
+        return self

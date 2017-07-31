@@ -27,7 +27,6 @@ def init_parser():
     parser.add_argument('--diff',
                         action='store_true',
                         help='Processes the percent diff for each compound')
-
     return parser
 
 def init_convert(parser):

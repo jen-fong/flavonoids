@@ -1,6 +1,7 @@
 import pandas as pd
 import re
 from filesys import Output
+import header_variables
 
 
 def convert(month, wavelength, date=None):
@@ -33,17 +34,9 @@ def convert(month, wavelength, date=None):
         df1 = df1.dropna(axis=1, how='all')
         df1 = df1.apply(pd.to_numeric, errors='ignore')
         # Finally, update all the headers so they do not just say intensity
-        updated_headers = ['wavelength',
-                           'buffer control',
-                           'buffer experiment',
-                           'liposomes control',
-                           'liposomes + {}'.format(csv.stem),
-                           'cyt c control',
-                           'cyt c experiment',
-                           'amplex red control',
-                           'amplex red experiment',
-                           'H2O2 control',
-                           'H2O2 experiment']
+        print(df1)
+        updated_headers = header_variables.get_header(wavelength, csv.stem)
+        print(updated_headers)
         df1.columns = updated_headers
         df1 = df1.apply(pd.to_numeric, errors='ignore')
         buffer_control = df1['buffer control']

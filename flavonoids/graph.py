@@ -35,6 +35,7 @@ def bar_graph(csv):
     # store all arrays in that config so that we can
     # read all headers from there
     # Everything else should be the same
+    pass
 
 
 def percent_diff(x, y):

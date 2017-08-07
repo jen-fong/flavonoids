@@ -1,7 +1,6 @@
-import csv_data
-import graph
 import argparse
 import sys
+import experiment
 
 
 def init_parser():
@@ -40,14 +39,14 @@ def init_convert(parser):
         sys.exit(1)
 
     if args.convert:
-        csv_data.convert(month, nm, date)
+        experiment.convert_data(month, nm, date)
 
     # give ability to convert to csv and graph in one step
     if args.graph:
-        graph.create(month, nm, date)
+        experiment.create_line_graph(month, nm, date)
 
     if args.diff:
-        graph.get_value(month, nm)
+        experiment.find_percent_difference(month, nm)
 
 if __name__ == "__main__":
     init_convert(init_parser())

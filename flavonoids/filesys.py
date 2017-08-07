@@ -6,11 +6,10 @@ class Csvs:
     def __init__(self):
         self.path = Path('csv_data/')
     
-    def get_path(self, month, wavelength, date='', raw='raw'):
+    def get_path(self, month, wavelength, date, folder):
         # can takea direct path to the folder
         # should use this for the command line flags
-        self.path = self.path / raw / month / wavelength
-
+        self.path = self.path / folder / month / wavelength
         if date:
             self.path = self.path / date
 

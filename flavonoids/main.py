@@ -9,8 +9,7 @@ def init_parser():
                      and creates plotly graphs from the data')
 
     parser.add_argument('-m', '--month',
-                        help='Enter a year and month in format yyyy-mm',
-                        required=True)
+                        help='Enter a year and month in format yyyy-mm')
     parser.add_argument('-w', '--wavelength',
                         help='Enter the wavelength, 570 or 293',
                         choices=['570', '293'],
@@ -23,9 +22,12 @@ def init_parser():
     parser.add_argument('--graph',
                         action='store_true',
                         help='Create graphs of data')
-    parser.add_argument('--diff',
+    parser.add_argument('--decrease',
                         action='store_true',
                         help='Processes the percent diff for each compound')
+    parser.add_argument('--avg',
+                        action='store_true',
+                        help='Creates avg of all experiment data')
     return parser
 
 def init_convert(parser):
@@ -35,18 +37,21 @@ def init_convert(parser):
     date = args.date
 
     if args.convert is None and args.graph is None:
-        print('Please choose convert or graph')
+        print('Please choose an option')
         sys.exit(1)
 
-    if args.convert:
+    if args.convert and month:
         experiment.convert_data(month, nm, date)
 
     # give ability to convert to csv and graph in one step
-    if args.graph:
+    if args.graph and month:
         experiment.create_line_graph(month, nm, date)
 
-    if args.diff:
-        experiment.find_percent_difference(month, nm)
+    if args.decrease and month:
+        experiment.find_percent_decrease(month, nm)
+
+    if args.avg:
+        experiment.create_average(nm)
 
 if __name__ == "__main__":
     init_convert(init_parser())

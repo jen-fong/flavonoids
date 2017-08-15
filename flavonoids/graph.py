@@ -21,17 +21,11 @@ def line_graph(csv, wavelength):
     return fig
 
 
-def bar_graph(df):
-    fig = df.iplot(kind='bar',
-                   x='flavonoid',
-                   y='percent difference',
-                   yTitle='%',
-                   xTitle='Flavanoid',
-                   title= '% Difference',
-                   asFigure=True)
+def bar_graph(df, **kwargs):
+    fig = df.iplot(**kwargs)
 
     return fig
 
 
-def percent_diff(x, y):
+def percent_decrease(x, y):
     return ((x - y) * 100) / x

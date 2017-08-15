@@ -5,18 +5,36 @@ import plotly
 class Csvs:
     def __init__(self):
         self.path = Path('csv_data/')
+
+    def get_main_path(self, folder):
+        self.path = self.path / folder
+        return self
+
+    def make_path(self, path_arr=[]):
+        for p in path_arr:
+            self.path = self.path / p
+
+        print(self.path)
+        return self
+
+    def get_nested_path(self, month, wavelength, date):
+        self.path = self.path / month / wavelength
+        if date:
+            self.path = self.path / date
+        return self
     
     def get_path(self, month, wavelength, date, folder):
         # can takea direct path to the folder
         # should use this for the command line flags
-        self.path = self.path / folder / month / wavelength
-        if date:
-            self.path = self.path / date
-
+        self.get_main_path(folder)
+        self.get_nested_path(month, wavelength, date)
         return self
 
-    def find_all_csv(self):
-        return [f for f in self.path.glob('**/*.csv') if f.is_file()]
+    def find_all_csv(self, wavelength=''):
+        pattern = '**/*.csv'
+        if wavelength:
+            pattern = '**/570/*/*.csv'
+        return [f for f in self.path.glob(pattern) if f.is_file()]
 
 
 class Output(Csvs):

@@ -175,7 +175,7 @@ def create_average(wavelength):
     new_column_names = ['Experiment 1', 'Experiment 2', 'Experiment 3']
     all_flav_df.columns = new_column_names
     all_flav_df['average'] = all_flav_df.mean(axis=1)
-    all_flav_df = all_flav_df.reset_index()
+
 
     column_details = experiment_variables.get_column_details()
     ordered_column_details = []
@@ -184,6 +184,9 @@ def create_average(wavelength):
         ordered_column_details += v['names']
         # for name in v['names']:
         #     grouped_colors.append(v['color'])
+
+    all_flav_df = all_flav_df.reindex(ordered_column_details)
+    all_flav_df = all_flav_df.reset_index()
 
     avg_graph = graph.graph(all_flav_df,
                             kind='bar',
@@ -198,6 +201,7 @@ def create_average(wavelength):
     csv_file = 'average_{}.csv'.format(wavelength)
     graph_file = 'average_{}.html'.format(wavelength)
 
+    print('creating bar graph for average for {}'.format(wavelength))
     analysis_path = Output() \
     .make_path(['analysis', 'average']) \
     .output_csv(all_flav_df, csv_file) \

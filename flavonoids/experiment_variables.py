@@ -53,3 +53,32 @@ def determine_decrease(wavelength, df, flavanoid):
             'experiment': lip_flav,
             'percent': graph.percent_decrease(lip_control, lip_flav)
         }
+
+
+def get_column_details():
+    return {
+        "flavanones": {
+            "names": ['flavanone', 'hesperetin', 'naringenin', 'naringin'],
+            "color": 'blue'
+        },
+        "flavanols": {
+            "names": ['catechin', 'epigallocatechin gallate'],
+            "color": 'green'
+        },
+        "flavonols": {
+            "names": ['fisetin', 'kaempferol', 'myricetin', 'rutin trihydrate'],
+            "color": 'pink'
+        },
+        "flavones": {
+            "names": ['baicalein', 'diosmin', 'flavone', 'luteolin'],
+            "color": 'orange'
+        },
+        "isoflavones": {
+            "names": ['biochanin a', 'daizden', 'genistein'],
+            "color": 'yellow'
+        },
+        "flavanonols": {
+            "names": ['taxifolin'],
+            "color": 'red'
+        }
+    }

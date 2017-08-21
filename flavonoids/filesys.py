@@ -12,9 +12,10 @@ class Csvs:
 
     def make_path(self, path_arr=[]):
         for p in path_arr:
+            if p is None:
+                continue
             self.path = self.path / p
 
-        print(self.path)
         return self
 
     def get_nested_path(self, month, wavelength, date):
@@ -33,7 +34,7 @@ class Csvs:
     def find_all_csv(self, wavelength=''):
         pattern = '**/*.csv'
         if wavelength:
-            pattern = '**/570/*/*.csv'
+            pattern = '**/*.csv'
         return [f for f in self.path.glob(pattern) if f.is_file()]
 
 

@@ -4,19 +4,20 @@ import re
 from filesys import Output
 import experiment_variables
 import graph
+import numpy as np
 
 cf.set_config_file(theme='space')
 
-def get_csvs(month, wavelength, date='', data_folder=''):
+def get_csvs(wavelength=None, path_arr=[]):
     csv_adapter = Output()
     return csv_adapter \
-           .get_path(month, wavelength, date, data_folder) \
-           .find_all_csv()
+           .make_path(path_arr) \
+           .find_all_csv(wavelength)
 
 
 def convert_data(month, wavelength, date=None):
     csv_adapter = Output()
-    csvs = get_csvs(month, wavelength, data_folder='raw')
+    csvs = get_csvs(path_arr=['raw', month, wavelength])
 
     for csv in csvs:
         df1 = pd.read_csv(str(csv))
@@ -66,7 +67,7 @@ def convert_data(month, wavelength, date=None):
 
 def create_line_graph(month, wavelength, date):
     cf.go_offline()
-    csvs = get_csvs(month, wavelength, date, 'processed') \
+    csvs = get_csvs(path_arr=['processed', month, wavelength, date])
 
     for csv in csvs:
         fig = graph.line_graph(csv, wavelength)
@@ -81,8 +82,8 @@ def create_line_graph(month, wavelength, date):
         .output_html(fig, filename)
 
 
-def find_percent_decrease(month, wavelength, date=None):
-    csvs = get_csvs(month, wavelength, date,'processed')
+def find_percent_decrease(experiment, month, wavelength, date=None):
+    csvs = get_csvs(path_arr=['processed', month, wavelength, date])
     cf.go_offline()
     emit_data = []
 
@@ -109,24 +110,24 @@ def find_percent_decrease(month, wavelength, date=None):
         emit_data.append(emit)
 
     df2 = pd.DataFrame(emit_data, columns=['flavonoid', 'control', 'experiment', 'percent decrease'])
-    control_experiment = graph.bar_graph(df2,
-                                         kind='bar',
-                                         barmode='group',
-                                         x='flavonoid',
-                                         y=['control', 'experiment'],
-                                         yTitle='%',
-                                         xTitle='Flavanoid',
-                                         title= '% Decrease',
-                                         asFigure=True)
-    percent_dec_graph = graph.bar_graph(df2,
-                                        kind='bar',
-                                        barmode='group',
-                                        x='flavonoid',
-                                        y='percent decrease',
-                                        yTitle='%',
-                                        xTitle='Flavanoid',
-                                        title= '% Decrease',
-                                        asFigure=True)
+    control_experiment = graph.graph(df2,
+                                     kind='bar',
+                                     barmode='group',
+                                     x='flavonoid',
+                                     y=['control', 'experiment'],
+                                     yTitle='%',
+                                     xTitle='Flavanoid',
+                                     title= '% Decrease',
+                                     asFigure=True)
+    percent_dec_graph = graph.graph(df2,
+                                    kind='bar',
+                                    barmode='group',
+                                    x='flavonoid',
+                                    y='percent decrease',
+                                    yTitle='%',
+                                    xTitle='Flavanoid',
+                                    title= '% Decrease',
+                                    asFigure=True)
     df2 = df2.set_index('flavonoid')
 
     csv_file = '{}.csv'.format(wavelength)
@@ -134,15 +135,16 @@ def find_percent_decrease(month, wavelength, date=None):
     percent_dec_html = 'precent_decrease_{}.html'.format(wavelength)
 
     print('Creating bar graph...')
+
     analysis_path = Output() \
-    .get_path(month, wavelength, 'decrease', 'analysis') \
+    .make_path(['analysis', 'decrease', experiment]) \
     .output_csv(df2, csv_file) \
     .output_html(control_experiment, control_exp_html) \
     .output_html(percent_dec_graph, percent_dec_html)
 
 
 def create_average(wavelength):
-    csvs = Output().get_main_path('analysis').find_all_csv(570)
+    csvs = get_csvs(wavelength, ['analysis', 'decrease'])
     cf.go_offline()
 
     all_flav_df = None
@@ -156,7 +158,7 @@ def create_average(wavelength):
         df = df.apply(pd.to_numeric, errors='ignore')
 
         current_headers = df.columns.values.tolist()
-        # print(df.index.tolist())
+
         columns_to_drop = ['control', 'experiment']
 
         df = df.drop(columns_to_drop, axis=1)
@@ -168,19 +170,30 @@ def create_average(wavelength):
         all_flav_df = pd.merge(all_flav_df,
                                df, left_index=True,
                                right_index=True,
-                               how='left')
+                               how='right')
 
-    all_flav_df.columns = ['Experiment 1', 'Experiment 2', 'Experiment 3']
+    new_column_names = ['Experiment 1', 'Experiment 2', 'Experiment 3']
+    all_flav_df.columns = new_column_names
     all_flav_df['average'] = all_flav_df.mean(axis=1)
     all_flav_df = all_flav_df.reset_index()
-    avg_graph = graph.bar_graph(all_flav_df,
-                                kind='bar',
-                                x='flavonoid',
-                                y='average',
-                                yTitle='Average',
-                                xTitle='Flavanoid',
-                                title= 'Average % Decrease',
-                                asFigure=True)
+
+    column_details = experiment_variables.get_column_details()
+    ordered_column_details = []
+    grouped_colors = []
+    for k, v in column_details.items():
+        ordered_column_details += v['names']
+        # for name in v['names']:
+        #     grouped_colors.append(v['color'])
+
+    avg_graph = graph.graph(all_flav_df,
+                            kind='bar',
+                            x='flavonoid',
+                            y='average',
+                            yTitle='Average',
+                            xTitle='Flavonoid',
+                            title= 'Average % Decrease',
+                            theme='pearl',
+                            asFigure=True)
 
     csv_file = 'average_{}.csv'.format(wavelength)
     graph_file = 'average_{}.html'.format(wavelength)

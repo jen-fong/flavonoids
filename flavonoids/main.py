@@ -28,6 +28,8 @@ def init_parser():
     parser.add_argument('--avg',
                         action='store_true',
                         help='Creates avg of all experiment data')
+    parser.add_argument('--experiment',
+                        help='Experiment number (1,2,3...)')
     return parser
 
 def init_convert(parser):
@@ -40,15 +42,23 @@ def init_convert(parser):
         print('Please choose an option')
         sys.exit(1)
 
-    if args.convert and month:
+    # if args.convert or args.graph or args.decrease and month is None:
+    #     print('Please enter a month')
+    #     sys.exit(1)
+
+    # if args.decrease and args.experiment is None:
+    #     print('Please enter an experiment number')
+    #     sys.exit(1)
+
+    if args.convert:
         experiment.convert_data(month, nm, date)
 
     # give ability to convert to csv and graph in one step
-    if args.graph and month:
+    if args.graph:
         experiment.create_line_graph(month, nm, date)
 
-    if args.decrease and month:
-        experiment.find_percent_decrease(month, nm)
+    if args.decrease:
+        experiment.find_percent_decrease(args.experiment, month, nm)
 
     if args.avg:
         experiment.create_average(nm)

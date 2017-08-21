@@ -13,15 +13,16 @@ def line_graph(csv, wavelength):
         # Need to check if I need this
     df1 = df1[1:]
 
-    fig = df1.iplot(kind = 'lines',
-                    size=5, asFigure=True,
-                    xTitle = 'Wavelength (nm)',
-                    yTitle = 'Intensity (A.U)')
+    fig = graph(df1,
+                kind = 'lines',
+                size=5, asFigure=True,
+                xTitle = 'Wavelength (nm)',
+                yTitle = 'Intensity (A.U)')
 
     return fig
 
 
-def bar_graph(df, **kwargs):
+def graph(df, **kwargs):
     fig = df.iplot(**kwargs)
 
     return fig

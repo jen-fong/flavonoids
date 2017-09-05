@@ -34,7 +34,7 @@ class Csvs:
     def find_all_csv(self, wavelength=''):
         pattern = '**/*.csv'
         if wavelength:
-            pattern = '**/*.csv'
+            pattern = '**/{}.csv'.format(wavelength)
         return [f for f in self.path.glob(pattern) if f.is_file()]
 
 

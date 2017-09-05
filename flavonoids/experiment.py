@@ -6,7 +6,6 @@ import experiment_variables
 import graph
 import numpy as np
 
-cf.set_config_file(theme='space')
 
 def get_csvs(wavelength=None, path_arr=[]):
     csv_adapter = Output()
@@ -170,7 +169,7 @@ def create_average(wavelength):
         all_flav_df = pd.merge(all_flav_df,
                                df, left_index=True,
                                right_index=True,
-                               how='right')
+                               how='left')
 
     new_column_names = ['Experiment 1', 'Experiment 2', 'Experiment 3']
     all_flav_df.columns = new_column_names
@@ -190,22 +189,32 @@ def create_average(wavelength):
 
     avg_graph = graph.graph(all_flav_df,
                             kind='bar',
+                            barmode='group',
                             x='flavonoid',
                             y='average',
                             yTitle='Average',
                             xTitle='Flavonoid',
                             title= 'Average % Decrease',
-                            theme='pearl',
+                            colors=['#3E6FB0'],
+                            theme='white',
                             asFigure=True)
 
+    all_with_avg_graph = graph.graph(all_flav_df,
+                                     kind='bar',
+                                     x='flavonoid',
+                                     yTitle='Average',
+                                     xTitle='Flavonoid',
+                                     title='% Decrease from all Experiments',
+                                     theme='space',
+                                     asFigure=True)
+
     csv_file = 'average_{}.csv'.format(wavelength)
-    graph_file = 'average_{}.html'.format(wavelength)
+    avg_graph_file = 'average_{}.html'.format(wavelength)
+    all_with_avg_file = 'all_with_avg_{}.html'.format(wavelength)
 
     print('creating bar graph for average for {}'.format(wavelength))
     analysis_path = Output() \
     .make_path(['analysis', 'average']) \
     .output_csv(all_flav_df, csv_file) \
-    .output_html(avg_graph, graph_file)
-    
-
-    
+    .output_html(avg_graph, avg_graph_file) \
+    .output_html(all_with_avg_graph, all_with_avg_file)
